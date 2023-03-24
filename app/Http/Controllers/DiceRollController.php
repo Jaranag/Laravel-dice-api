@@ -41,4 +41,20 @@ class DiceRollController extends Controller
         }
     }
 
+    public function delete($id)
+    {
+        if (auth()->user()->id == $id) {
+            DiceRoll::whereIn('id_user', auth()->user()->id)->delete();
+            return $message = [
+                'message' => 'user games deleted'
+            ];
+        } else {
+            return [
+                'error message' => 'can only delete your dice rolls',
+                'your id' => auth()->user()->id
+            ];
+        }
+        
+    }
+
 }
