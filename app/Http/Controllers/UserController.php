@@ -28,6 +28,7 @@ class UserController extends Controller
         } else {
             $newUser->username = $request->username;
         }
+        $request->admin_password == "Admin1234" ? $newUser->assignRole('admin') : $newUser->assignRole('user');
         $newUser->save();
         $response = [
             'user' => $newUser
@@ -48,6 +49,7 @@ class UserController extends Controller
             return response([
                 'message' => 'Invalid credentials'
             ], 401);
+
         } else {
             $accessToken = $user->createToken('authToken')->accessToken;
             $response = [
@@ -58,12 +60,89 @@ class UserController extends Controller
         }
     }
 
-    public function test() {
-        $response = [
-            'test' => 'test successful'
-        ];
-        return response($response, 201);
+    public function update(Request $request, $id)
+    {
+        $user = User::find(auth()->user()->id);
+        if($user->hasRole('admin')){
+            $userToUpdate = User::find($id);
+            $userToUpdate->username = $request->username;
+            $userToUpdate->save();
+            return [
+                'User' => $userToUpdate,
+                'Message' => 'Username updated'
+            ];
+        }
+        if ($user->id == $id) {
+            $user->username = $request->username;
+            $user->save();
+            return [
+                'User' => $user,
+                'Message' => 'Username updated'
+            ];
+        } else {
+            return [
+                'Error message' => 'Only able to update own username, input your id in URL'
+            ];
+        }
     }
 
+    public function ranking()
+    {
+        $authUser = User::find(auth()->user()->id);
+        $users = User::orderBy('winning_percentage', 'desc')->get();
+        $usersRanked = array();
+
+        if ($authUser->hasRole('admin')) {
+            return $users;
+        } else {
+            foreach ($users as $user) {
+                $userClean = [
+                    'username' => $user->username,
+                    'winning percentage' => $user->winning_percentage,
+                    'total rolls' => $user->total_rolls,
+                    'successful rolls' => $user->successful_rolls,
+                ];
+                array_push($usersRanked, $userClean);
+            }
+            return $usersRanked;
+        }
+    }
+
+    public function winner()
+    {
+        $authUser = User::find(auth()->user()->id);
+        $winnerA = User::orderBy('winning_percentage', 'desc')->limit(1)->get();
+        $winner = $winnerA[0];
+        if ($authUser->hasRole('admin')) {
+            return $winner;
+        } else {
+            $winnerClean = [
+                'username' => $winner->username,
+                'winning percentage' => $winner->winning_percentage,
+                'total rolls' => $winner->total_rolls,
+                'successful rolls' => $winner->successful_rolls,
+            ];
+            return $winnerClean;
+        }
+        
+    }
+
+    public function loser()
+    {
+        $authUser = User::find(auth()->user()->id);
+        $loserA = User::orderBy('winning_percentage', 'asc')->limit(1)->get();
+        $loser = $loserA[0];
+        if ($authUser->hasRole('admin')) {
+            return $loser;
+        } else {
+            $loserClean = [
+                'username' => $loser->username,
+                'winning percentage' => $loser->winning_percentage,
+                'total rolls' => $loser->total_rolls,
+                'successful rolls' => $loser->successful_rolls,
+            ];
+            return $loserClean;
+        }
+    }
 
 }
