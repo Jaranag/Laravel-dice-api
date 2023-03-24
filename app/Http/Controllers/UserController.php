@@ -60,11 +60,30 @@ class UserController extends Controller
         }
     }
 
-    public function test() {
-        $response = [
-            'test' => 'test successful'
-        ];
-        return response($response, 201);
+    public function update(Request $request, $id)
+    {
+        $user = User::find(auth()->user()->id);
+        if($user->hasRole('admin')){
+            $userToUpdate = User::find($id);
+            $userToUpdate->username = $request->username;
+            $userToUpdate->save();
+            return [
+                'User' => $userToUpdate,
+                'Message' => 'Username updated'
+            ];
+        }
+        if ($user->id == $id) {
+            $user->username = $request->username;
+            $user->save();
+            return [
+                'User' => $user,
+                'Message' => 'Username updated'
+            ];
+        } else {
+            return [
+                'Error message' => 'Only able to update own username, input your id in URL'
+            ];
+        }
     }
 
 
