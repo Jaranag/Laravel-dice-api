@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\DiceRoll;
 use App\Models\User;
 use GuzzleHttp\Psr7\Message;
+use Illuminate\Support\Facades\Auth;
+
 
 class DiceRollController extends Controller
 {
@@ -55,6 +57,19 @@ class DiceRollController extends Controller
             ];
         }
         
+    }
+
+    protected function updateUser(DiceRoll $roll)
+    {
+        $user = User::find(Auth::user()->id);
+        $user->total_rolls += 1;
+        if ($roll->was_successful == 'Yes') {
+            $user->successful_rolls += 1;
+        }
+        $totalRolls = $user->total_rolls;
+        $successfulRolls = $user->successful_rolls;
+        $user->winning_percentage = $successfulRolls/$totalRolls * 100;
+        $user->save();
     }
 
 }
