@@ -28,6 +28,7 @@ class UserController extends Controller
         } else {
             $newUser->username = $request->username;
         }
+        $request->admin_password == "Admin1234" ? $newUser->assignRole('admin') : $newUser->assignRole('user');
         $newUser->save();
         $response = [
             'user' => $newUser
@@ -48,6 +49,7 @@ class UserController extends Controller
             return response([
                 'message' => 'Invalid credentials'
             ], 401);
+
         } else {
             $accessToken = $user->createToken('authToken')->accessToken;
             $response = [
