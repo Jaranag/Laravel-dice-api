@@ -58,5 +58,12 @@ class UserController extends Controller
         }
     }
 
+    public function test() {
+        $response = [
+            'test' => 'test successful'
+        ];
+        return response($response, 201);
+    }
+
 
 }

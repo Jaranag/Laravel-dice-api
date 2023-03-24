@@ -36,5 +36,6 @@ Route::get('/players/ranking/loser', [UserController::class, 'loser']);
 
 
 // Route::middleware('auth:api')->get('/all', UserController::all());
-// Route::group(['middleware' => ['auth:api']], function () {
-// });
+Route::group(['middleware' => ['auth:api']], function () {
+    Route::get('/test', [UserController::class, 'test']);
+});
