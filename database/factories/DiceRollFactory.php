@@ -16,8 +16,20 @@ class DiceRollFactory extends Factory
      */
     public function definition(): array
     {
+        $dice1 = rand(1, 6);
+        $dice2 = rand(1, 6);
+        $result = $dice1 + $dice2;
+        if ($result == 7) {
+            $response = 'Yes';
+        } else {
+            $response = 'No';
+        }
         return [
-            //
+            'id_user' => rand(1, 21),
+            'dice1' => $dice1,
+            'dice2' => $dice2,
+            'result' => $result,
+            'was_successful' => $response
         ];
     }
 }
