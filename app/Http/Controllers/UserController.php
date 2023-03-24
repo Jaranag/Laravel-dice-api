@@ -49,10 +49,12 @@ class UserController extends Controller
                 'message' => 'Invalid credentials'
             ], 401);
         } else {
+            $accessToken = $user->createToken('authToken')->accessToken;
             $response = [
                 'user' => $user,
+                'token' => $accessToken
             ];
-         return response($response, 201);
+            return response($response, 201);
         }
     }
 
