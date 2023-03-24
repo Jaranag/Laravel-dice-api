@@ -86,5 +86,63 @@ class UserController extends Controller
         }
     }
 
+    public function ranking()
+    {
+        $authUser = User::find(auth()->user()->id);
+        $users = User::orderBy('winning_percentage', 'desc')->get();
+        $usersRanked = array();
+
+        if ($authUser->hasRole('admin')) {
+            return $users;
+        } else {
+            foreach ($users as $user) {
+                $userClean = [
+                    'username' => $user->username,
+                    'winning percentage' => $user->winning_percentage,
+                    'total rolls' => $user->total_rolls,
+                    'successful rolls' => $user->successful_rolls,
+                ];
+                array_push($usersRanked, $userClean);
+            }
+            return $usersRanked;
+        }
+    }
+
+    public function winner()
+    {
+        $authUser = User::find(auth()->user()->id);
+        $winnerA = User::orderBy('winning_percentage', 'desc')->limit(1)->get();
+        $winner = $winnerA[0];
+        if ($authUser->hasRole('admin')) {
+            return $winner;
+        } else {
+            $winnerClean = [
+                'username' => $winner->username,
+                'winning percentage' => $winner->winning_percentage,
+                'total rolls' => $winner->total_rolls,
+                'successful rolls' => $winner->successful_rolls,
+            ];
+            return $winnerClean;
+        }
+        
+    }
+
+    public function loser()
+    {
+        $authUser = User::find(auth()->user()->id);
+        $loserA = User::orderBy('winning_percentage', 'asc')->limit(1)->get();
+        $loser = $loserA[0];
+        if ($authUser->hasRole('admin')) {
+            return $loser;
+        } else {
+            $loserClean = [
+                'username' => $loser->username,
+                'winning percentage' => $loser->winning_percentage,
+                'total rolls' => $loser->total_rolls,
+                'successful rolls' => $loser->successful_rolls,
+            ];
+            return $loserClean;
+        }
+    }
 
 }
