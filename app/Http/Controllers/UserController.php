@@ -10,7 +10,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        return User::all();
+        $response = User::all();
+        return response($response, 201);
     }
 
     public function register(Request $request)
@@ -98,7 +99,7 @@ class UserController extends Controller
         $usersRanked = array();
 
         if ($authUser->hasRole('admin')) {
-            return $users;
+            return response($users, 201);
         } else {
             foreach ($users as $user) {
                 $userClean = [
