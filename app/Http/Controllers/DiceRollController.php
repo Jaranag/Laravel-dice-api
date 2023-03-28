@@ -20,21 +20,21 @@ class DiceRollController extends Controller
 
     public function roll($id)
     {
-        
+
         if (auth()->user()->id == $id) {
             $newRoll = new DiceRoll;
-        $newRoll->id_user = auth()->user()->id;
-        $newRoll->dice1 = rand(1, 6);
-        $newRoll->dice2 = rand(1, 6);
-        $newRoll->result = $newRoll->dice1 +  $newRoll->dice2;
-        if ($newRoll->result == 7) {
-            $newRoll->was_successful = 'Yes';
-        } else {
-            $newRoll->was_successful = 'No';
-        }
-        $this->updateUser($newRoll);
-        $newRoll->save();
-        return $newRoll;
+            $newRoll->id_user = auth()->user()->id;
+            $newRoll->dice1 = rand(1, 6);
+            $newRoll->dice2 = rand(1, 6);
+            $newRoll->result = $newRoll->dice1 +  $newRoll->dice2;
+            if ($newRoll->result == 7) {
+                $newRoll->was_successful = 'Yes';
+            } else {
+                $newRoll->was_successful = 'No';
+            }
+            $this->updateUser($newRoll);
+            $newRoll->save();
+            return response($newRoll, 201);
         } else {
             return [
                 'error message' => 'can only roll for yourself',
@@ -47,6 +47,10 @@ class DiceRollController extends Controller
     {
         if (auth()->user()->id == $id) {
             DiceRoll::whereIn('id_user', auth()->user()->id)->delete();
+            $user = User::find(auth()->user()->id);
+            $user->total_rolls = 0;
+            $user->successful_rolls = 0;
+            $user->winning_percentage = 0;
             return $message = [
                 'message' => 'user games deleted'
             ];
@@ -56,7 +60,6 @@ class DiceRollController extends Controller
                 'your id' => auth()->user()->id
             ];
         }
-        
     }
 
     protected function updateUser(DiceRoll $roll)
@@ -68,8 +71,7 @@ class DiceRollController extends Controller
         }
         $totalRolls = $user->total_rolls;
         $successfulRolls = $user->successful_rolls;
-        $user->winning_percentage = $successfulRolls/$totalRolls * 100;
+        $user->winning_percentage = $successfulRolls / $totalRolls * 100;
         $user->save();
     }
-
 }
