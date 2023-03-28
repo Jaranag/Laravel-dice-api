@@ -32,7 +32,7 @@ class DiceRollTest extends TestCase
         $user->assignRole('user');
         $this->actingAs($user, 'api')->postJson(route('diceroll.roll', $user->id));
         $response = $this->actingAs($user, 'api')->get(route('diceroll.index', $user->id));
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertJsonStructure([['dice1']]);
     }
 }

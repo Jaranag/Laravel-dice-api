@@ -21,20 +21,6 @@ class UserTest extends TestCase
         $this->artisan('db:seed');
     }
 
-    public function login() {
-        $user = [
-            'email' => fake()->safeEmail(),
-            'password' => 'test',
-        ];
-        $response = $this->postJson(route('players.register'), $user);
-        $response = $this->postJson(route('login'), [
-            'email' => $user['email'],
-            'password' => 'test',
-        ]);
-
-        return $user;
-    }
-
     public function test_createUser(): void
     {
         $user = [
@@ -120,6 +106,8 @@ class UserTest extends TestCase
         ]);
         $response = $this->actingAs($user, 'api')->get(route('players.showAll'));
         $response->assertJsonStructure([['username']]);
+        $response->assertStatus(201);
+
     }
 
     public function test_user_cant_see_users() {
@@ -137,7 +125,7 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('admin');
         $response = $this->actingAs($user, 'api')->get(route('players.ranking'));
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertJsonStructure([['created_at']]);
     }
 
@@ -145,7 +133,7 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('user');
         $response = $this->actingAs($user, 'api')->get(route('players.ranking'));
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertJsonStructure([['username']]);
     }
 
@@ -153,7 +141,7 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('user');
         $response = $this->actingAs($user, 'api')->get(route('players.winner'));
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertJsonStructure(['username']);
     }
 
@@ -161,7 +149,7 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('admin');
         $response = $this->actingAs($user, 'api')->get(route('players.winner'));
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertJsonStructure(['created_at']);
     }
 
@@ -170,7 +158,7 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('user');
         $response = $this->actingAs($user, 'api')->get(route('players.loser'));
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertJsonStructure(['username']);
     }
 
@@ -178,7 +166,7 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('admin');
         $response = $this->actingAs($user, 'api')->get(route('players.loser'));
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $response->assertJsonStructure(['created_at']);
     }
     public function test_can_update_username(){
@@ -186,7 +174,7 @@ class UserTest extends TestCase
         $user->assignRole('admin');
         $response = $this->actingAs($user, 'api')->putJson(route('players.update', $user->id), ['username' => 'newUsername'], ['Accept' => 'application/json']);
         $response->assertJsonStructure(['Message']);
-        $response->assertStatus(200);
+        $response->assertStatus(201);
     }
 
     // public function test_can_update_username(){

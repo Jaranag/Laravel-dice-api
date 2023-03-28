@@ -15,7 +15,7 @@ class DiceRollController extends Controller
     {
         $user = User::find($id);
         $userRolls = $user->diceRolls;
-        return $userRolls;
+        return response($userRolls, 201);
     }
 
     public function roll($id)
@@ -36,10 +36,12 @@ class DiceRollController extends Controller
             $newRoll->save();
             return response($newRoll, 201);
         } else {
-            return [
+            $response =  [
                 'error message' => 'can only roll for yourself',
                 'your id' => auth()->user()->id
             ];
+            return response($response, 403);
+
         }
     }
 
@@ -51,14 +53,17 @@ class DiceRollController extends Controller
             $user->total_rolls = 0;
             $user->successful_rolls = 0;
             $user->winning_percentage = 0;
-            return $message = [
+            $response = [
                 'message' => 'user games deleted'
             ];
+            return response($response, 201);
         } else {
-            return [
+            $response =  [
                 'error message' => 'can only delete your dice rolls',
                 'your id' => auth()->user()->id
             ];
+            return response($response, 403);
+
         }
     }
 

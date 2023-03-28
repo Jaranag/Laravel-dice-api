@@ -10,7 +10,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        return User::all();
+        $response = User::all();
+        return response($response, 201);
     }
 
     public function register(Request $request)
@@ -68,22 +69,26 @@ class UserController extends Controller
             $userToUpdate = User::find($id);
             $userToUpdate->username = $request->username;
             $userToUpdate->save();
-            return [
+            $response = [
                 'User' => $userToUpdate,
                 'Message' => 'Username updated'
             ];
+            return response($response, 201);
         }
         if ($user->id == $id) {
             $user->username = $request->username;
             $user->save();
-            return [
+            $response =  [
                 'User' => $user,
                 'Message' => 'Username updated'
             ];
+            return response($response, 201);
         } else {
-            return [
+            $response =  [
                 'Error message' => 'Only able to update own username, input your id in URL'
             ];
+            return response($response, 403);
+
         }
     }
 
@@ -94,7 +99,7 @@ class UserController extends Controller
         $usersRanked = array();
 
         if ($authUser->hasRole('admin')) {
-            return $users;
+            return response($users, 201);
         } else {
             foreach ($users as $user) {
                 $userClean = [
@@ -105,7 +110,8 @@ class UserController extends Controller
                 ];
                 array_push($usersRanked, $userClean);
             }
-            return $usersRanked;
+            return response($usersRanked, 201);
+
         }
     }
 
@@ -115,7 +121,7 @@ class UserController extends Controller
         $winnerA = User::orderBy('winning_percentage', 'desc')->limit(1)->get();
         $winner = $winnerA[0];
         if ($authUser->hasRole('admin')) {
-            return $winner;
+            return response($winner, 201);
         } else {
             $winnerClean = [
                 'username' => $winner->username,
@@ -123,7 +129,8 @@ class UserController extends Controller
                 'total rolls' => $winner->total_rolls,
                 'successful rolls' => $winner->successful_rolls,
             ];
-            return $winnerClean;
+            return response($winnerClean, 201);
+
         }
         
     }
@@ -134,7 +141,7 @@ class UserController extends Controller
         $loserA = User::orderBy('winning_percentage', 'asc')->limit(1)->get();
         $loser = $loserA[0];
         if ($authUser->hasRole('admin')) {
-            return $loser;
+            return response($loser, 201);
         } else {
             $loserClean = [
                 'username' => $loser->username,
@@ -142,7 +149,7 @@ class UserController extends Controller
                 'total rolls' => $loser->total_rolls,
                 'successful rolls' => $loser->successful_rolls,
             ];
-            return $loserClean;
+            return response($loserClean, 201);
         }
     }
 
