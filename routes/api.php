@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DiceRollController;
-
+use GuzzleHttp\Middleware;
+use Spatie\Permission\Models\Role;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,12 +26,15 @@ Route::post('/players/login', [UserController::class, 'login'])->name('login');
 
 // Route::middleware('auth:api')->get('/all', UserController::all());
 Route::group(['middleware' => ['auth:api']], function () {
-    Route::get('/players', [UserController::class, 'index'], ['middleware' => ['role:admin']])->name('players.showAll');
+    Route::group(['middleware' => ['role:admin']], function () {
+        Route::get('/players', [UserController::class, 'index'])->name('players.showAll');
+
+    });
     Route::put('/players/{id}', [UserController::class, 'update'])->name('players.update');
     Route::get('/players/{id}/games', [DiceRollController::class, 'index'])->name('diceroll.index');
     Route::post('/players/{id}/games', [DiceRollController::class, 'roll'])->name('diceroll.roll');
     Route::delete('/players/{id}/games', [DiceRollController::class, 'delete'])->name('diceroll.delete');
-    Route::get('/players/ranking', [UserController::class, 'ranking'])->name('users.ranking');
-    Route::get('/players/ranking/winner', [UserController::class, 'winner'])->name('users.winner');
-    Route::get('/players/ranking/loser', [UserController::class, 'loser'])->name('users.loser');
+    Route::get('/players/ranking', [UserController::class, 'ranking'])->name('players.ranking');
+    Route::get('/players/ranking/winner', [UserController::class, 'winner'])->name('players.winner');
+    Route::get('/players/ranking/loser', [UserController::class, 'loser'])->name('players.loser');
 });
