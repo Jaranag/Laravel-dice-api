@@ -16,7 +16,10 @@ class DiceRollTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        // $this->artisan('migrate');
         $this->artisan('db:seed');
+        // $this->artisan('passport:install');
+
     }
 
     public function test_user_can_roll() {
@@ -40,8 +43,8 @@ class DiceRollTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('user');
         $this->actingAs($user, 'api')->postJson(route('diceroll.roll', $user->id));
-        $response = $this->actingAs($user, 'api')->delete(route('diceroll.index', $user->id));
+        $response = $this->actingAs($user, 'api')->delete(route('diceroll.delete', $user->id));
         $response->assertStatus(201);
-        $response->assertJsonFragment([['dice1']]);
+        $response->assertJsonStructure(['message']);
     }
 }
