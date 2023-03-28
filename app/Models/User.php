@@ -46,6 +46,6 @@ class User extends Authenticatable
     ];
 
     public function diceRolls() {
-        return $this->hasMany(DiceRoll::class);
+        return $this->hasMany(DiceRoll::class, 'id_user');
     }
 }
