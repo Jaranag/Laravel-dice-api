@@ -30,6 +30,14 @@ class DiceRollTest extends TestCase
         $response->assertJsonStructure(['dice1']);
     }
 
+    public function test_user_cant_roll_for_other_users() {
+        $user = User::factory()->create();
+        $user->assignRole('user');
+        $response = $this->actingAs($user, 'api')->postJson(route('diceroll.roll', 3));
+        $response->assertStatus(403);
+        $response->assertJsonStructure(['error message']);
+    }
+
     public function test_user_can_see_rolls() {
         $user = User::factory()->create();
         $user->assignRole('user');
