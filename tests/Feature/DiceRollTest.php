@@ -19,22 +19,20 @@ class DiceRollTest extends TestCase
         $this->artisan('db:seed');
     }
 
-    public function test_can_see_rolls() {
+    public function test_user_can_roll() {
         $user = User::factory()->create();
         $user->assignRole('user');
-        $response = $this->actingAs($user, 'api')->get(route('diceroll.roll', $user->id));
-        $response->assertStatus(200);
-        $response->assertJsonFragment(['user']);
+        $response = $this->actingAs($user, 'api')->postJson(route('diceroll.roll', $user->id));
+        $response->assertStatus(201);
+        $response->assertJsonStructure(['dice1']);
     }
 
-    // public function test_can_see_rolls() {
-    //     $user = User::factory()->create();
-    //     $user->assignRole('user');
-    //     $diceRoll = DiceRoll::factory()->make([
-    //         'id_user' => $user->id
-    //     ]);
-    //     $response = $this->actingAs($user, 'api')->get(route('diceroll.index', $diceRoll->id_user));
-    //     $response->assertStatus(200);
-    //     $response->assertJsonFragment([]);
-    // }
+    public function test_user_can_see_rolls() {
+        $user = User::factory()->create();
+        $user->assignRole('user');
+        $this->actingAs($user, 'api')->postJson(route('diceroll.roll', $user->id));
+        $response = $this->actingAs($user, 'api')->get(route('diceroll.index', $user->id));
+        $response->assertStatus(200);
+        $response->assertJsonStructure([['dice1']]);
+    }
 }

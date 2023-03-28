@@ -181,17 +181,13 @@ class UserTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure(['created_at']);
     }
-    // public function test_can_update_username(){
-    //     $user = User::factory()->create();
-    //     $user->assignRole('admin');
-    //     $response = $this->postJson(route('login'), [
-    //         'email' => $user->email,
-    //         'password' => 'password'
-    //     ]);
-    //     $response = $this->actingAs($user, 'api')->postJson(route('players.update', $user->id), ['username' => 'newUsername']);
-    //     $response->assertJsonFragment(['User']);
-    //     $response->assertStatus(200);
-    // }
+    public function test_can_update_username(){
+        $user = User::factory()->create();
+        $user->assignRole('admin');
+        $response = $this->actingAs($user, 'api')->putJson(route('players.update', $user->id), ['username' => 'newUsername'], ['Accept' => 'application/json']);
+        $response->assertJsonStructure(['Message']);
+        $response->assertStatus(200);
+    }
 
     // public function test_can_update_username(){
     //     $user = User::factory()->create();

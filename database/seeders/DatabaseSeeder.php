@@ -22,9 +22,5 @@ class DatabaseSeeder extends Seeder
         // $this->call(DiceRollSeeder::class);
         // $this->call(UserUpdate::class);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }
