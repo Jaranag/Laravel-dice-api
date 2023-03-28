@@ -28,7 +28,6 @@ Route::post('/players/login', [UserController::class, 'login'])->name('login');
 Route::group(['middleware' => ['auth:api']], function () {
     Route::group(['middleware' => ['role:admin']], function () {
         Route::get('/players', [UserController::class, 'index'])->name('players.showAll');
-
     });
     Route::put('/players/{id}', [UserController::class, 'update'])->name('players.update');
     Route::get('/players/{id}/games', [DiceRollController::class, 'index'])->name('diceroll.index');
