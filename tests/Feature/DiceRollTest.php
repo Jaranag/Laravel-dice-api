@@ -35,4 +35,13 @@ class DiceRollTest extends TestCase
         $response->assertStatus(201);
         $response->assertJsonStructure([['dice1']]);
     }
+
+    public function test_user_can_delete_rolls() {
+        $user = User::factory()->create();
+        $user->assignRole('user');
+        $this->actingAs($user, 'api')->postJson(route('diceroll.roll', $user->id));
+        $response = $this->actingAs($user, 'api')->delete(route('diceroll.index', $user->id));
+        $response->assertStatus(201);
+        $response->assertJsonFragment([['dice1']]);
+    }
 }
