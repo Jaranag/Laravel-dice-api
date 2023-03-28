@@ -14,13 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {           
-        // $this->call(RoleSeeder::class);
-        // $this->call(AdminSeeder::class);
-        // \App\Models\User::factory(20)->create()->each(function ($user) {
-        //     $user->assignRole('user'); 
-        // });
-        // $this->call(DiceRollSeeder::class);
-        // $this->call(UserUpdate::class);
+        $this->call(RoleSeeder::class);
+        $this->call(AdminSeeder::class);
+        \App\Models\User::factory(20)->create()->each(function ($user) {
+            $user->assignRole('user'); 
+        });
+        $this->call(DiceRollSeeder::class);
+        $this->call(UserUpdate::class);
 
     }
 }
